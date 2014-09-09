@@ -4,10 +4,13 @@
 //
 
 #pragma once
-#include <Windows.h>
 #include "targetver.h"
+#include <Windows.h>
+#include <wrl.h>
 
 #include <stdio.h>
 #include <tchar.h>
 
 #include "Chk.h"
+
+using namespace Microsoft::WRL;

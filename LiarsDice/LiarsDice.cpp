@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "Console.h"
 #include "Test.h"
 
 void NewLine(void);
@@ -16,7 +17,6 @@ int main(void)
     LPSTR lpszPrompt2 = "Type any key, or q to quit: ";
     CHAR chBuffer[256];
     DWORD cRead, cWritten, fdwMode, fdwOldMode;
-    WORD wOldColorAttrs;
 
     // Get handles to STDIN and STDOUT. 
 
@@ -32,15 +32,8 @@ int main(void)
     }
 
     // Save the current text colors. 
-
-    if (!GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
-    {
-        MessageBox(NULL, TEXT("GetConsoleScreenBufferInfo"),
-            TEXT("Console Error"), MB_OK);
-        return 1;
-    }
-
-    wOldColorAttrs = csbiInfo.wAttributes;
+    ComPtr<Console> spConsole;
+    Chk(MakeAndInitialize<Console>(&spConsole));
 
     // Set the text attributes to draw red text on black background. 
 
@@ -137,8 +130,7 @@ int main(void)
     SetConsoleMode(hStdin, fdwOldMode);
 
     // Restore the original text colors. 
-
-    SetConsoleTextAttribute(hStdout, wOldColorAttrs);
+    spConsole = nullptr;
 
     ClearScreen(hStdout);
 
