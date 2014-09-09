@@ -44,8 +44,7 @@ int main(void)
 
     // Set the text attributes to draw red text on black background. 
 
-    if (!SetConsoleTextAttribute(hStdout, FOREGROUND_RED |
-        FOREGROUND_INTENSITY))
+    if (!SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY))
     {
         MessageBox(NULL, TEXT("SetConsoleTextAttribute"),
             TEXT("Console Error"), MB_OK);
