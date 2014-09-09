@@ -1,3 +1,3 @@
 #pragma once
 
-HRESULT DoSomething();
+void ClearScreen(HANDLE hConsole);

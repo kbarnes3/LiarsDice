@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "Chk.h"
 #include "Test.h"
 
 void NewLine(void);
@@ -53,7 +52,7 @@ int main(void)
         return 1;
     }
 
-    Chk(DoSomething());
+    ClearScreen(hStdout);
 
     // Write to STDOUT and read from STDIN by using the default 
     // modes. Input is echoed automatically, and ReadFile 
@@ -141,6 +140,8 @@ int main(void)
     // Restore the original text colors. 
 
     SetConsoleTextAttribute(hStdout, wOldColorAttrs);
+
+    ClearScreen(hStdout);
 
     return 0;
 }
