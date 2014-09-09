@@ -2,6 +2,8 @@
 *.opensdf
 *.sdf
 *.v12.suo
+*.vcxproj.user
 
 # Visual Studio output
+ipch
 x64

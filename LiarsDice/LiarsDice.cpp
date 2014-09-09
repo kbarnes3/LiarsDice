@@ -2,7 +2,8 @@
 //
 
 #include "stdafx.h"
-
+#include "Chk.h"
+#include "Test.h"
 
 void NewLine(void);
 void ScrollScreenBuffer(HANDLE, INT);
@@ -25,6 +26,7 @@ int main(void)
     if (hStdin == INVALID_HANDLE_VALUE ||
         hStdout == INVALID_HANDLE_VALUE)
     {
+
         MessageBox(NULL, TEXT("GetStdHandle"), TEXT("Console Error"),
             MB_OK);
         return 1;
@@ -51,6 +53,8 @@ int main(void)
         return 1;
     }
 
+    Chk(DoSomething());
+
     // Write to STDOUT and read from STDIN by using the default 
     // modes. Input is echoed automatically, and ReadFile 
     // does not return until a carriage return is typed. 
@@ -58,7 +62,7 @@ int main(void)
     // The default input modes are line, processed, and echo. 
     // The default output modes are processed and wrap at EOL. 
 
-    while (1)
+    for (;;)
     {
         if (!WriteFile(
             hStdout,               // output handle 
@@ -105,7 +109,7 @@ int main(void)
 
     NewLine();
 
-    while (1)
+    for (;;)
     {
         if (!WriteFile(
             hStdout,               // output handle 
