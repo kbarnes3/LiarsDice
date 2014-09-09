@@ -1,0 +1,7 @@
+# Visual Studio files
+*.opensdf
+*.sdf
+*.v12.suo
+
+# Visual Studio output
+x64
