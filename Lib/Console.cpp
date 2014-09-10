@@ -15,7 +15,24 @@ Console::~Console()
 
 HRESULT Console::RuntimeClassInitialize()
 {
-    m_hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CreateHandles();
+    return S_OK;
+}
+
+void Console::RunConsole()
+{
+
+}
+
+void Console::CreateHandles()
+{
+    m_hStdOut = CreateFileW(L"CONOUT$",
+        GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_WRITE,
+        nullptr,
+        OPEN_EXISTING,
+        0,
+        nullptr);
     ChkIf(m_hStdOut == INVALID_HANDLE_VALUE);
 
     CONSOLE_SCREEN_BUFFER_INFO csbi = {};
@@ -23,10 +40,12 @@ HRESULT Console::RuntimeClassInitialize()
     ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
     m_originalColors = csbi.wAttributes;
 
-    return S_OK;
 }
 
 void Console::ResetColors()
 {
-    SetConsoleTextAttribute(m_hStdOut, m_originalColors);
+    if (m_hStdOut != INVALID_HANDLE_VALUE)
+    {
+        ChkIf(!SetConsoleTextAttribute(m_hStdOut, m_originalColors));
+    }
 }

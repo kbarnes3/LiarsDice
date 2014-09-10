@@ -7,8 +7,10 @@ public:
     ~Console();
 
     HRESULT RuntimeClassInitialize();
+    void RunConsole();
 
 private:
+    void CreateHandles();
     void ResetColors();
 
     HANDLE m_hStdOut;
