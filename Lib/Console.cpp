@@ -21,7 +21,7 @@ HRESULT Console::RuntimeClassInitialize()
 
 void Console::RunConsole()
 {
-
+    ClearScreen();
 }
 
 void Console::CreateHandles()
@@ -40,6 +40,33 @@ void Console::CreateHandles()
     ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
     m_originalColors = csbi.wAttributes;
 
+}
+
+void Console::ClearScreen()
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi = {};
+
+    ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
+
+    DWORD consoleSize = csbi.dwSize.X * csbi.dwSize.Y;
+    COORD origin = {0, 0};
+    DWORD charsWritten = 0;
+
+    ChkIf(!FillConsoleOutputCharacterW(m_hStdOut,
+        L' ',
+        consoleSize,
+        origin,
+        &charsWritten));
+
+    ChkIf(!FillConsoleOutputAttribute(m_hStdOut,
+        csbi.wAttributes,
+        consoleSize,
+        origin,
+        &charsWritten));
+
+    ChkIf(!SetConsoleCursorPosition(m_hStdOut, origin));
+
+    return;
 }
 
 void Console::ResetColors()

@@ -11,6 +11,7 @@ public:
 
 private:
     void CreateHandles();
+    void ClearScreen();
     void ResetColors();
 
     HANDLE m_hStdOut;
