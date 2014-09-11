@@ -11,9 +11,12 @@ public:
 
 private:
     void CreateHandles();
+    void SetConsoleState();
     void ClearScreen();
-    void ResetColors();
+    void ResetConsoleState();
 
+    HANDLE m_hStdIn;
     HANDLE m_hStdOut;
+    DWORD m_originalMode;
     WORD m_originalColors;
 };
