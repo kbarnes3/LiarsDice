@@ -16,6 +16,8 @@ private:
     void ClearScreen();
     void ResetConsoleState();
 
+    void SampleDisplay();
+
     HANDLE m_hStdIn;
     HANDLE m_hStdOut;
     DWORD m_originalMode;
