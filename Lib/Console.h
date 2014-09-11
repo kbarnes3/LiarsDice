@@ -12,6 +12,7 @@ public:
 private:
     void CreateHandles();
     void SetConsoleState();
+    void InputLoop();
     void ClearScreen();
     void ResetConsoleState();
 

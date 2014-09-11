@@ -28,6 +28,7 @@ HRESULT Console::RuntimeClassInitialize()
 void Console::RunConsole()
 {
     ClearScreen();
+    InputLoop();
 }
 
 void Console::CreateHandles()
@@ -61,7 +62,37 @@ void Console::SetConsoleState()
     ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
     m_originalColors = csbi.wAttributes;
     ChkIf(!SetConsoleTextAttribute(m_hStdOut, CONSOLE_COLORS));
+}
 
+void Console::InputLoop()
+{
+    for (;;)
+    {
+        INPUT_RECORD rgInputs[128] = {};
+        DWORD inputsRead = 0;
+
+        ChkIf(!ReadConsoleInput(
+            m_hStdIn,
+            rgInputs,
+            ARRAYSIZE(rgInputs),
+            &inputsRead));
+
+        for (DWORD i = 0; i < inputsRead; i++)
+        {
+            const INPUT_RECORD* pInput = rgInputs + i;
+            switch (pInput->EventType)
+            {
+                case KEY_EVENT:
+                    return;
+                    break;
+                case WINDOW_BUFFER_SIZE_EVENT:
+                    // Handle resized console windows
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
 void Console::ClearScreen()
@@ -102,6 +133,7 @@ void Console::ResetConsoleState()
     if (m_hStdOut != INVALID_HANDLE_VALUE)
     {
         ChkIf(!SetConsoleTextAttribute(m_hStdOut, m_originalColors));
+        ClearScreen();
         CloseHandle(m_hStdOut);
     }
 }
