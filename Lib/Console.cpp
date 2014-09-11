@@ -7,6 +7,8 @@ DWORD CONSOLE_MODE = ENABLE_WINDOW_INPUT;
 Console::Console() :
     m_hStdIn(INVALID_HANDLE_VALUE),
     m_hStdOut(INVALID_HANDLE_VALUE),
+    m_width(0),
+    m_height(0),
     m_originalMode(0),
     m_originalColors(0)
 {
@@ -27,7 +29,7 @@ HRESULT Console::RuntimeClassInitialize()
 
 void Console::RunConsole()
 {
-    ClearScreen();
+    ClearScreen(CONSOLE_COLORS);
     SampleDisplay();
     InputLoop();
 }
@@ -61,6 +63,8 @@ void Console::SetConsoleState()
     CONSOLE_SCREEN_BUFFER_INFO csbi = {};
 
     ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
+    m_width = csbi.dwSize.X;
+    m_height = csbi.dwSize.Y;
     m_originalColors = csbi.wAttributes;
     ChkIf(!SetConsoleTextAttribute(m_hStdOut, CONSOLE_COLORS));
 }
@@ -96,13 +100,9 @@ void Console::InputLoop()
     }
 }
 
-void Console::ClearScreen()
+void Console::ClearScreen(WORD attributes)
 {
-    CONSOLE_SCREEN_BUFFER_INFO csbi = {};
-
-    ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
-
-    DWORD consoleSize = csbi.dwSize.X * csbi.dwSize.Y;
+    DWORD consoleSize = m_width * m_height;
     COORD origin = {0, 0};
     DWORD charsWritten = 0;
 
@@ -113,7 +113,7 @@ void Console::ClearScreen()
         &charsWritten));
 
     ChkIf(!FillConsoleOutputAttribute(m_hStdOut,
-        csbi.wAttributes,
+        attributes,
         consoleSize,
         origin,
         &charsWritten));
@@ -134,7 +134,7 @@ void Console::ResetConsoleState()
     if (m_hStdOut != INVALID_HANDLE_VALUE)
     {
         ChkIf(!SetConsoleTextAttribute(m_hStdOut, m_originalColors));
-        ClearScreen();
+        ClearScreen(m_originalColors);
         CloseHandle(m_hStdOut);
     }
 }

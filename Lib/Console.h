@@ -13,13 +13,15 @@ private:
     void CreateHandles();
     void SetConsoleState();
     void InputLoop();
-    void ClearScreen();
+    void ClearScreen(WORD attributes);
     void ResetConsoleState();
 
     void SampleDisplay();
 
     HANDLE m_hStdIn;
     HANDLE m_hStdOut;
+    SHORT m_width;
+    SHORT m_height;
     DWORD m_originalMode;
     WORD m_originalColors;
 };
