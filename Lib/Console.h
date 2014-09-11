@@ -16,8 +16,6 @@ private:
     void ClearScreen(WORD attributes);
     void ResetConsoleState();
 
-    void SampleDisplay();
-
     HANDLE m_hStdIn;
     HANDLE m_hStdOut;
     SHORT m_width;

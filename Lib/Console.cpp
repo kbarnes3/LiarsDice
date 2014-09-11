@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Console.h"
+#include "Frame.h"
 
 WORD CONSOLE_COLORS = FOREGROUND_GREEN;
 DWORD CONSOLE_MODE = ENABLE_WINDOW_INPUT;
@@ -30,7 +31,11 @@ HRESULT Console::RuntimeClassInitialize()
 void Console::RunConsole()
 {
     ClearScreen(CONSOLE_COLORS);
-    SampleDisplay();
+    
+    ComPtr<Frame> spFrame;
+    Chk(MakeAndInitialize<Frame>(&spFrame, m_hStdIn, m_hStdOut, m_width, m_height));
+    spFrame->InitializeFrame();
+
     InputLoop();
 }
 
@@ -137,26 +142,4 @@ void Console::ResetConsoleState()
         ClearScreen(m_originalColors);
         CloseHandle(m_hStdOut);
     }
-}
-
-void Console::SampleDisplay()
-{
-    WCHAR letters[] = L"These are some things to output";
-    CHAR_INFO chars[ARRAYSIZE(letters) - 1] = {};
-    COORD buffer_size = {ARRAYSIZE(chars), 1};
-    COORD origin = {0, 0};
-    SMALL_RECT rect = {0, 0, ARRAYSIZE(chars), 0};
-
-    for (size_t i = 0; i < ARRAYSIZE(chars); i++)
-    {
-        CHAR_INFO* pChar = chars + i;
-        pChar->Char.UnicodeChar = letters[i];
-        pChar->Attributes = CONSOLE_COLORS;
-    }
-
-    ChkIf(!WriteConsoleOutput(m_hStdOut,
-        chars,
-        buffer_size,
-        origin,
-        &rect));
 }
