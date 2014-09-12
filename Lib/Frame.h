@@ -10,6 +10,9 @@ public:
     void InitializeFrame();
 
 private:
+    void DisplayBorders();
+    void DisplayVerticalBorders();
+
     HANDLE m_hStdIn;
     HANDLE m_hStdOut;
     WORD m_width;

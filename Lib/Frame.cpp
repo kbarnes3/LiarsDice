@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Frame.h"
 
+WORD BORDER_COLOR = FOREGROUND_GREEN | FOREGROUND_RED;
+
 Frame::Frame() :
     m_hStdIn(INVALID_HANDLE_VALUE),
     m_hStdOut(INVALID_HANDLE_VALUE),
@@ -17,6 +19,11 @@ Frame::~Frame()
 
 HRESULT Frame::RuntimeClassInitialize(HANDLE hStdIn, HANDLE hStdOut, WORD width, WORD height)
 {
+    /*ChkIf(hStdIn == INVALID_HANDLE_VALUE);
+    ChkIf(hStdOut == INVALID_HANDLE_VALUE);
+    ChkIf(width >= 1);
+    ChkIf(height >= 1);*/
+
     m_hStdIn = hStdIn;
     m_hStdOut = hStdOut;
     m_width = width;
@@ -27,22 +34,35 @@ HRESULT Frame::RuntimeClassInitialize(HANDLE hStdIn, HANDLE hStdOut, WORD width,
 
 void Frame::InitializeFrame()
 {
-    WCHAR letters[] = L"These are some things to output";
-    CHAR_INFO chars[ARRAYSIZE(letters) - 1] = {};
-    COORD buffer_size = {ARRAYSIZE(chars), 1};
-    COORD origin = {0, 0};
-    SMALL_RECT rect = {0, 0, ARRAYSIZE(chars), 0};
+    DisplayBorders();
+}
 
-    for (size_t i = 0; i < ARRAYSIZE(chars); i++)
+void Frame::DisplayBorders()
+{
+    DisplayVerticalBorders();
+}
+
+void Frame::DisplayVerticalBorders()
+{
+    CHAR_INFO* chars = new CHAR_INFO[m_height];
+    ChkIf(!chars);
+
+    for (size_t i = 0; i < m_height; i++)
     {
         CHAR_INFO* pChar = chars + i;
-        pChar->Char.UnicodeChar = letters[i];
-        pChar->Attributes = 2;
+        pChar->Char.UnicodeChar = L'|';
+        pChar->Attributes = BORDER_COLOR;
     }
 
+    COORD buffer_size = {1, m_height};
+
+    COORD left_origin = {0, 0};
+    SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
     ChkIf(!WriteConsoleOutput(m_hStdOut,
         chars,
         buffer_size,
-        origin,
-        &rect));
+        left_origin,
+        &left_rect));
+
+    //COORD right_origin = {0, m_width - 1};
 }
