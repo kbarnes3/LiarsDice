@@ -48,7 +48,7 @@ void Console::CreateHandles()
         OPEN_EXISTING,
         0,
         nullptr);
-    ChkIf(m_hStdIn == INVALID_HANDLE_VALUE);
+    ChkIf(m_hStdIn != INVALID_HANDLE_VALUE);
 
     m_hStdOut = CreateFileW(L"CONOUT$",
         GENERIC_READ | GENERIC_WRITE,
@@ -57,21 +57,21 @@ void Console::CreateHandles()
         OPEN_EXISTING,
         0,
         nullptr);
-    ChkIf(m_hStdOut == INVALID_HANDLE_VALUE);
+    ChkIf(m_hStdOut != INVALID_HANDLE_VALUE);
 }
 
 void Console::SetConsoleState()
 {
-    ChkIf(!GetConsoleMode(m_hStdIn, &m_originalMode));
-    ChkIf(!SetConsoleMode(m_hStdIn, CONSOLE_MODE));
+    ChkIf(GetConsoleMode(m_hStdIn, &m_originalMode));
+    ChkIf(SetConsoleMode(m_hStdIn, CONSOLE_MODE));
 
     CONSOLE_SCREEN_BUFFER_INFO csbi = {};
 
-    ChkIf(!GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
+    ChkIf(GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
     m_width = csbi.dwSize.X;
     m_height = csbi.dwSize.Y;
     m_originalColors = csbi.wAttributes;
-    ChkIf(!SetConsoleTextAttribute(m_hStdOut, CONSOLE_COLORS));
+    ChkIf(SetConsoleTextAttribute(m_hStdOut, CONSOLE_COLORS));
 }
 
 void Console::InputLoop()
@@ -81,7 +81,7 @@ void Console::InputLoop()
         INPUT_RECORD rgInputs[128] = {};
         DWORD inputsRead = 0;
 
-        ChkIf(!ReadConsoleInput(
+        ChkIf(ReadConsoleInput(
             m_hStdIn,
             rgInputs,
             ARRAYSIZE(rgInputs),
@@ -111,19 +111,19 @@ void Console::ClearScreen(WORD attributes)
     COORD origin = {0, 0};
     DWORD charsWritten = 0;
 
-    ChkIf(!FillConsoleOutputCharacterW(m_hStdOut,
+    ChkIf(FillConsoleOutputCharacterW(m_hStdOut,
         L' ',
         consoleSize,
         origin,
         &charsWritten));
 
-    ChkIf(!FillConsoleOutputAttribute(m_hStdOut,
+    ChkIf(FillConsoleOutputAttribute(m_hStdOut,
         attributes,
         consoleSize,
         origin,
         &charsWritten));
 
-    ChkIf(!SetConsoleCursorPosition(m_hStdOut, origin));
+    ChkIf(SetConsoleCursorPosition(m_hStdOut, origin));
 
     return;
 }
@@ -132,13 +132,13 @@ void Console::ResetConsoleState()
 {
     if (m_hStdIn != INVALID_HANDLE_VALUE)
     {
-        ChkIf(!SetConsoleMode(m_hStdIn, m_originalMode));
+        ChkIf(SetConsoleMode(m_hStdIn, m_originalMode));
         CloseHandle(m_hStdIn);
     }
 
     if (m_hStdOut != INVALID_HANDLE_VALUE)
     {
-        ChkIf(!SetConsoleTextAttribute(m_hStdOut, m_originalColors));
+        ChkIf(SetConsoleTextAttribute(m_hStdOut, m_originalColors));
         ClearScreen(m_originalColors);
         CloseHandle(m_hStdOut);
     }

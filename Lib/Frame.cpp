@@ -19,10 +19,10 @@ Frame::~Frame()
 
 HRESULT Frame::RuntimeClassInitialize(HANDLE hStdIn, HANDLE hStdOut, WORD width, WORD height)
 {
-    /*ChkIf(hStdIn == INVALID_HANDLE_VALUE);
-    ChkIf(hStdOut == INVALID_HANDLE_VALUE);
+    ChkIf(hStdIn != INVALID_HANDLE_VALUE);
+    ChkIf(hStdOut != INVALID_HANDLE_VALUE);
     ChkIf(width >= 1);
-    ChkIf(height >= 1);*/
+    ChkIf(height >= 1);
 
     m_hStdIn = hStdIn;
     m_hStdOut = hStdOut;
@@ -45,7 +45,7 @@ void Frame::DisplayBorders()
 void Frame::DisplayVerticalBorders()
 {
     CHAR_INFO* chars = new CHAR_INFO[m_height];
-    ChkIf(!chars);
+    ChkIf(chars);
 
     for (size_t i = 0; i < m_height; i++)
     {
@@ -58,7 +58,7 @@ void Frame::DisplayVerticalBorders()
 
     COORD left_origin = {0, 0};
     SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
-    ChkIf(!WriteConsoleOutput(m_hStdOut,
+    ChkIf(WriteConsoleOutput(m_hStdOut,
         chars,
         buffer_size,
         left_origin,

@@ -5,7 +5,7 @@
 #define Chk(hr) \
     do \
     { \
-        if (!SUCCEEDED(hr)) \
+        if (FAILED(hr)) \
         { \
             FailFast(); \
         } \
@@ -18,7 +18,7 @@
 #define ChkIf(bool) \
     do \
     { \
-        if (bool) \
+        if (!(bool)) \
         { \
             FailFast(); \
         } \
