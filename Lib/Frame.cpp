@@ -26,8 +26,8 @@ HRESULT Frame::RuntimeClassInitialize(HANDLE hStdIn, HANDLE hStdOut, WORD width,
 
     m_hStdIn = hStdIn;
     m_hStdOut = hStdOut;
-    m_width = width;
-    m_height = height;
+    m_width = 120;
+    m_height = 32;
 
     return S_OK;
 }
@@ -40,7 +40,7 @@ void Frame::InitializeFrame()
 void Frame::DisplayBorders()
 {
     DisplayVerticalBorders();
-    DisplayHorizontalBorders();
+    //DisplayHorizontalBorders();
 }
 
 void Frame::DisplayVerticalBorders()
@@ -56,6 +56,7 @@ void Frame::DisplayVerticalBorders()
     }
 
     COORD buffer_size = {1, m_height};
+    DebugBreak();
 
     COORD left_origin = {0, 0};
     SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
@@ -65,7 +66,11 @@ void Frame::DisplayVerticalBorders()
         left_origin,
         &left_rect));
 
-    COORD right_origin = {0, m_width - 1};
+    CONSOLE_SCREEN_BUFFER_INFO csbi = {};
+
+    ChkIf(GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
+    
+    COORD right_origin = {m_width - 1, 0};
     SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
@@ -96,11 +101,12 @@ void Frame::DisplayHorizontalBorders()
         top_origin,
         &top_rect));
 
-    /*COORD right_origin = {0, m_width - 1};
-    SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
+    DebugBreak();
+    COORD bottom_origin = {0, m_height - 1};
+    SMALL_RECT bottom_rect = {0, m_height - 1, m_width - 1, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
         buffer_size,
-        right_origin,
-        &right_rect));*/
+        bottom_origin,
+        &bottom_rect));
 }
