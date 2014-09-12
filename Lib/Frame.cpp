@@ -58,11 +58,17 @@ void Frame::DisplayVerticalBorders()
 
     COORD left_origin = {0, 0};
     SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
-    ChkIf(WriteConsoleOutput(m_hStdOut,
+    ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
         buffer_size,
         left_origin,
         &left_rect));
 
-    //COORD right_origin = {0, m_width - 1};
+    COORD right_origin = {0, m_width - 1};
+    SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
+    ChkIf(WriteConsoleOutputW(m_hStdOut,
+        chars,
+        buffer_size,
+        right_origin,
+        &right_rect));
 }
