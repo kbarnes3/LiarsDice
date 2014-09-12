@@ -68,8 +68,8 @@ void Console::SetConsoleState()
     CONSOLE_SCREEN_BUFFER_INFO csbi = {};
 
     ChkIf(GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
-    m_width = csbi.dwMaximumWindowSize.X;
-    m_height = csbi.dwMaximumWindowSize.Y;
+    m_width = /*csbi.dwMaximumWindowSize.X;*/ 120;
+    m_height = /*csbi.dwMaximumWindowSize.Y;*/ 32;
     m_originalColors = csbi.wAttributes;
     ChkIf(SetConsoleTextAttribute(m_hStdOut, CONSOLE_COLORS));
 }

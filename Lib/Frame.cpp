@@ -40,13 +40,22 @@ void Frame::InitializeFrame()
 void Frame::DisplayBorders()
 {
     DisplayVerticalBorders();
-    //DisplayHorizontalBorders();
+    DisplayHorizontalBorders();
 }
 
 void Frame::DisplayVerticalBorders()
 {
     CHAR_INFO* chars = new CHAR_INFO[m_height];
+    CHAR_INFO* right_chars = new CHAR_INFO[m_height];
     ChkIf(chars);
+    ChkIf(right_chars);
+
+    for (size_t i = 0; i < m_height; i++)
+    {
+        CHAR_INFO* pChar = right_chars + i;
+        pChar->Char.UnicodeChar = L'|';
+        pChar->Attributes = BORDER_COLOR;
+    }
 
     for (size_t i = 0; i < m_height; i++)
     {
@@ -56,7 +65,6 @@ void Frame::DisplayVerticalBorders()
     }
 
     COORD buffer_size = {1, m_height};
-    DebugBreak();
 
     COORD left_origin = {0, 0};
     SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
@@ -70,7 +78,7 @@ void Frame::DisplayVerticalBorders()
 
     ChkIf(GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
     
-    COORD right_origin = {m_width - 1, 0};
+    COORD right_origin = {0, 0};
     SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
@@ -101,8 +109,7 @@ void Frame::DisplayHorizontalBorders()
         top_origin,
         &top_rect));
 
-    DebugBreak();
-    COORD bottom_origin = {0, m_height - 1};
+    COORD bottom_origin = {0, 0};
     SMALL_RECT bottom_rect = {0, m_height - 1, m_width - 1, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
