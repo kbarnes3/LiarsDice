@@ -40,6 +40,7 @@ void Frame::InitializeFrame()
 void Frame::DisplayBorders()
 {
     DisplayVerticalBorders();
+    DisplayHorizontalBorders();
 }
 
 void Frame::DisplayVerticalBorders()
@@ -71,4 +72,35 @@ void Frame::DisplayVerticalBorders()
         buffer_size,
         right_origin,
         &right_rect));
+}
+
+void Frame::DisplayHorizontalBorders()
+{
+    CHAR_INFO* chars = new CHAR_INFO[m_width];
+    ChkIf(chars);
+
+    for (size_t i = 0; i < m_width; i++)
+    {
+        CHAR_INFO* pChar = chars + i;
+        pChar->Char.UnicodeChar = L'=';
+        pChar->Attributes = BORDER_COLOR;
+    }
+
+    COORD buffer_size = {m_width, 1};
+
+    COORD top_origin = {0, 0};
+    SMALL_RECT top_rect = {0, 0, m_width - 1, 0};
+    ChkIf(WriteConsoleOutputW(m_hStdOut,
+        chars,
+        buffer_size,
+        top_origin,
+        &top_rect));
+
+    /*COORD right_origin = {0, m_width - 1};
+    SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
+    ChkIf(WriteConsoleOutputW(m_hStdOut,
+        chars,
+        buffer_size,
+        right_origin,
+        &right_rect));*/
 }

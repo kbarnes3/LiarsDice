@@ -12,6 +12,7 @@ public:
 private:
     void DisplayBorders();
     void DisplayVerticalBorders();
+    void DisplayHorizontalBorders();
 
     HANDLE m_hStdIn;
     HANDLE m_hStdOut;
