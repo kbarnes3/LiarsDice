@@ -87,8 +87,23 @@ void Frame::DisplayVerticalBorders()
     }
 }
 
+struct HorizontalBorderInfo
+{
+    SHORT Column;
+    SHORT Left;
+    SHORT Length;
+};
+
 void Frame::DisplayHorizontalBorders()
 {
+    HorizontalBorderInfo lines[] = {
+        {0, 0, m_width - 1},
+        {2, 0, m_width-1},
+        {6, 0, m_width-1},
+        {m_height - 11, 0, m_width-1},
+        {m_height - 3, 0, m_width-1},
+        {m_height - 1, 0, m_width-1},
+    };
     CHAR_INFO* chars = new CHAR_INFO[m_width];
     ChkIf(chars);
 
@@ -102,17 +117,19 @@ void Frame::DisplayHorizontalBorders()
     COORD buffer_size = {m_width, 1};
     COORD origin = {0, 0};
 
-    SMALL_RECT top_rect = {0, 0, m_width - 1, 0};
-    ChkIf(WriteConsoleOutputW(m_hStdOut,
-        chars,
-        buffer_size,
-        origin,
-        &top_rect));
+    for (size_t i = 0; i < ARRAYSIZE(lines); i++)
+    {
+        HorizontalBorderInfo* pLine = lines + i;
+        SMALL_RECT rect = {};
+        rect.Top = pLine->Column;
+        rect.Bottom = pLine->Column;
+        rect.Left = pLine->Left;
+        rect.Right = pLine->Left + pLine->Length - 1;
 
-    SMALL_RECT bottom_rect = {0, m_height - 1, m_width - 1, m_height - 1};
-    ChkIf(WriteConsoleOutputW(m_hStdOut,
-        chars,
-        buffer_size,
-        origin,
-        &bottom_rect));
+        ChkIf(WriteConsoleOutputW(m_hStdOut,
+            chars,
+            buffer_size,
+            origin,
+            &rect));
+    }
 }
