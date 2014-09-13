@@ -43,8 +43,20 @@ void Frame::DisplayBorders()
     DisplayHorizontalBorders();
 }
 
+struct VerticalBorderInfo
+{
+    SHORT Row;
+    SHORT Top;
+    SHORT Length;
+};
+
 void Frame::DisplayVerticalBorders()
 {
+    VerticalBorderInfo lines[] = {
+        {0, 0, m_height - 1},
+        {m_width - 1, 0, m_height - 1},
+        {m_width/2 - 1, m_height - 10, 7},
+    };
     CHAR_INFO* chars = new CHAR_INFO[m_height];
     ChkIf(chars);
 
@@ -58,19 +70,21 @@ void Frame::DisplayVerticalBorders()
     COORD buffer_size = {1, m_height};
     COORD origin = {0, 0};
 
-    SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
-    ChkIf(WriteConsoleOutputW(m_hStdOut,
-        chars,
-        buffer_size,
-        origin,
-        &left_rect));
+    for (size_t i = 0; i < ARRAYSIZE(lines); i++)
+    {
+        VerticalBorderInfo *pLine = lines + i;
+        SMALL_RECT rect = {};
+        rect.Left = pLine->Row;
+        rect.Right = pLine->Row;
+        rect.Top = pLine->Top;
+        rect.Bottom = pLine->Top + pLine->Length - 1;
 
-    SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
-    ChkIf(WriteConsoleOutputW(m_hStdOut,
-        chars,
-        buffer_size,
-        origin,
-        &right_rect));
+        ChkIf(WriteConsoleOutputW(m_hStdOut,
+            chars,
+            buffer_size,
+            origin,
+            &rect));
+    }
 }
 
 void Frame::DisplayHorizontalBorders()
