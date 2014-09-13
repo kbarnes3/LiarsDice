@@ -26,8 +26,8 @@ HRESULT Frame::RuntimeClassInitialize(HANDLE hStdIn, HANDLE hStdOut, WORD width,
 
     m_hStdIn = hStdIn;
     m_hStdOut = hStdOut;
-    m_width = 120;
-    m_height = 32;
+    m_width = width;
+    m_height = height;
 
     return S_OK;
 }
@@ -46,16 +46,7 @@ void Frame::DisplayBorders()
 void Frame::DisplayVerticalBorders()
 {
     CHAR_INFO* chars = new CHAR_INFO[m_height];
-    CHAR_INFO* right_chars = new CHAR_INFO[m_height];
     ChkIf(chars);
-    ChkIf(right_chars);
-
-    for (size_t i = 0; i < m_height; i++)
-    {
-        CHAR_INFO* pChar = right_chars + i;
-        pChar->Char.UnicodeChar = L'|';
-        pChar->Attributes = BORDER_COLOR;
-    }
 
     for (size_t i = 0; i < m_height; i++)
     {
@@ -65,25 +56,20 @@ void Frame::DisplayVerticalBorders()
     }
 
     COORD buffer_size = {1, m_height};
+    COORD origin = {0, 0};
 
-    COORD left_origin = {0, 0};
     SMALL_RECT left_rect = {0, 0, 0, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
         buffer_size,
-        left_origin,
+        origin,
         &left_rect));
 
-    CONSOLE_SCREEN_BUFFER_INFO csbi = {};
-
-    ChkIf(GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
-    
-    COORD right_origin = {0, 0};
     SMALL_RECT right_rect = {m_width - 1, 0, m_width - 1, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
         buffer_size,
-        right_origin,
+        origin,
         &right_rect));
 }
 
@@ -100,20 +86,19 @@ void Frame::DisplayHorizontalBorders()
     }
 
     COORD buffer_size = {m_width, 1};
+    COORD origin = {0, 0};
 
-    COORD top_origin = {0, 0};
     SMALL_RECT top_rect = {0, 0, m_width - 1, 0};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
         buffer_size,
-        top_origin,
+        origin,
         &top_rect));
 
-    COORD bottom_origin = {0, 0};
     SMALL_RECT bottom_rect = {0, m_height - 1, m_width - 1, m_height - 1};
     ChkIf(WriteConsoleOutputW(m_hStdOut,
         chars,
         buffer_size,
-        bottom_origin,
+        origin,
         &bottom_rect));
 }

@@ -8,8 +8,10 @@ DWORD CONSOLE_MODE = ENABLE_WINDOW_INPUT;
 Console::Console() :
     m_hStdIn(INVALID_HANDLE_VALUE),
     m_hStdOut(INVALID_HANDLE_VALUE),
-    m_width(0),
-    m_height(0),
+    m_screenWidth(0),
+    m_screenHeight(0),
+    m_bufferWidth(0),
+    m_bufferHeight(0),
     m_originalMode(0),
     m_originalColors(0)
 {
@@ -33,7 +35,7 @@ void Console::RunConsole()
     ClearScreen(CONSOLE_COLORS);
     
     ComPtr<Frame> spFrame;
-    Chk(MakeAndInitialize<Frame>(&spFrame, m_hStdIn, m_hStdOut, m_width, m_height));
+    Chk(MakeAndInitialize<Frame>(&spFrame, m_hStdIn, m_hStdOut, m_screenWidth, m_screenHeight));
     spFrame->InitializeFrame();
 
     InputLoop();
@@ -68,8 +70,10 @@ void Console::SetConsoleState()
     CONSOLE_SCREEN_BUFFER_INFO csbi = {};
 
     ChkIf(GetConsoleScreenBufferInfo(m_hStdOut, &csbi));
-    m_width = /*csbi.dwMaximumWindowSize.X;*/ 120;
-    m_height = /*csbi.dwMaximumWindowSize.Y;*/ 32;
+    m_screenWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    m_screenHeight = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    m_bufferWidth = csbi.dwSize.X;
+    m_bufferHeight = csbi.dwSize.Y;
     m_originalColors = csbi.wAttributes;
     ChkIf(SetConsoleTextAttribute(m_hStdOut, CONSOLE_COLORS));
 }
@@ -107,19 +111,19 @@ void Console::InputLoop()
 
 void Console::ClearScreen(WORD attributes)
 {
-    DWORD consoleSize = m_width * m_height;
+    DWORD bufferSize = m_bufferWidth * m_bufferHeight;
     COORD origin = {0, 0};
     DWORD charsWritten = 0;
 
     ChkIf(FillConsoleOutputCharacterW(m_hStdOut,
         L' ',
-        consoleSize,
+        bufferSize,
         origin,
         &charsWritten));
 
     ChkIf(FillConsoleOutputAttribute(m_hStdOut,
         attributes,
-        consoleSize,
+        bufferSize,
         origin,
         &charsWritten));
 

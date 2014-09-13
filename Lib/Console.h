@@ -18,8 +18,10 @@ private:
 
     HANDLE m_hStdIn;
     HANDLE m_hStdOut;
-    SHORT m_width;
-    SHORT m_height;
+    SHORT m_screenWidth;
+    SHORT m_screenHeight;
+    SHORT m_bufferWidth;
+    SHORT m_bufferHeight;
     DWORD m_originalMode;
     WORD m_originalColors;
 };
